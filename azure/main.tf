@@ -1,8 +1,15 @@
+################################################################################
+# terraform dependencies
+
 terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 3.25.0"
+    }
+    random = {
+      source = "hashicorp/random"
+      version = "3.4.3"
     }
   }
 
@@ -13,10 +20,18 @@ provider "azurerm" {
   features {}
 }
 
+provider "random" {}
+
+################################################################################
+# resource group
+
 resource "azurerm_resource_group" "rg" {
   name     = "dump-cloud"
   location = "germanywestcentral"
 }
+
+################################################################################
+# net
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet"
@@ -63,9 +78,17 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-resource "azurerm_network_interface_security_group_association" "example" {
+resource "azurerm_network_interface_security_group_association" "nic_netsg" {
   network_interface_id      = azurerm_network_interface.nic.id
   network_security_group_id = azurerm_network_security_group.netsg.id
+}
+
+################################################################################
+# vm
+
+resource "random_password" "vm_password" {
+  length = 40
+  lower  = true
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
@@ -74,9 +97,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
   location                        = azurerm_resource_group.rg.location
   size                            = "Standard_B2s"
   admin_username                  = "dump-deploy"
-  admin_password                  = ""
-  network_interface_ids           = [azurerm_network_interface.nic.id]
+  admin_password                  = random_password.vm_password.result
   disable_password_authentication = false
+  network_interface_ids           = [azurerm_network_interface.nic.id]
   source_image_id                 = var.vm_image_id
 
   os_disk {

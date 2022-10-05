@@ -22,6 +22,7 @@
 
 - <https://learn.hashicorp.com/collections/terraform/azure-get-started>
 - <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs>
+- <https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-terraform>
 
 ## vim
 
