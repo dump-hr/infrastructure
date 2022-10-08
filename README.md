@@ -18,6 +18,12 @@
 - [ZFS Capacity Calculator - WintelGuy.com](https://wintelguy.com/zfs-calc.pl) `Web tool`
 - [How to upgrade a ZFS RAID-Z array to larger disks on OpenSolaris? - Server Fault](https://serverfault.com/a/15330) `Comment`
 
+## Terraform
+
+- <https://learn.hashicorp.com/collections/terraform/azure-get-started>
+- <https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs>
+- <https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-terraform>
+
 ## vim
 
 - <https://vim.rtorr.com/>
