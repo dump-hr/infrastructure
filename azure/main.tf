@@ -72,8 +72,11 @@ resource "azurerm_network_security_group" "netsg" {
   }
 }
 
-resource "azurerm_network_interface" "nic" {
-  name                = "nic"
+################################################################################
+# vm
+
+resource "azurerm_network_interface" "vm1-nic" {
+  name                = "vm1-nic"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -81,33 +84,30 @@ resource "azurerm_network_interface" "nic" {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = var.cloud_ip_id
+    public_ip_address_id          = var.vm1-ip_id
   }
 }
 
-resource "azurerm_network_interface_security_group_association" "nic_netsg" {
-  network_interface_id      = azurerm_network_interface.nic.id
+resource "azurerm_network_interface_security_group_association" "vm1-nic_netsg" {
+  network_interface_id      = azurerm_network_interface.vm1-nic.id
   network_security_group_id = azurerm_network_security_group.netsg.id
 }
 
-################################################################################
-# vm
-
-resource "random_password" "vm_password" {
+resource "random_password" "vm1-password" {
   length = 40
   lower  = true
 }
 
-resource "azurerm_linux_virtual_machine" "vm" {
-  name                            = "vm"
+resource "azurerm_linux_virtual_machine" "vm1" {
+  name                            = "vm1"
   resource_group_name             = azurerm_resource_group.rg.name
   location                        = azurerm_resource_group.rg.location
-  size                            = "Standard_B2s"
+  size                            = "Standard_B2ms"
   admin_username                  = "dump-deploy"
-  admin_password                  = random_password.vm_password.result
+  admin_password                  = random_password.vm1-password.result
   disable_password_authentication = false
-  network_interface_ids           = [azurerm_network_interface.nic.id]
-  source_image_id                 = var.vm_image_id
+  network_interface_ids           = [azurerm_network_interface.vm1-nic.id]
+  source_image_id                 = var.nixos_image_id
 
   os_disk {
     caching              = "ReadWrite"
