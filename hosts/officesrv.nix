@@ -62,7 +62,7 @@ in {
       ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -o ${networkInterface} -j MASQUERADE
     '';
 
-    privateKey = "<% echo -n hi %>";
+    privateKey = builtins.fromJSON(builtins.readFile ./runtime/wgPrivateKey.json).key;
     peers = builtins.fromJSON(builtins.readFile ./runtime/wgPeers.json);
   };
 

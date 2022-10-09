@@ -5,8 +5,6 @@ set -ex
 ssh_connection="$1"
 configuration_file="$2"
 runtime_dir=./hosts/runtime
-ssh_collection_id=927a8631-da7c-4197-a0ff-8b8bf19c967c
-wg_collection_id=45237f3d-7c00-4a12-893e-5c399432f461
 
 ################################################################################
 # generate and copy runtime data
@@ -14,16 +12,7 @@ wg_collection_id=45237f3d-7c00-4a12-893e-5c399432f461
 mkdir "$runtime_dir"
 trap "rm -r $runtime_dir" EXIT
 
-bw list items --collectionid "$ssh_collection_id" \
-| jq '[.[].fields[]|select(.name=="sshPublicKey").value]' \
-> "$runtime_dir/sshAuthorizedKeys.json"
-
-bw list items --collectionid "$wg_collection_id" \
-| jq '[.[].fields | {
-  publicKey: .[]|select(.name=="wgPublicKey").value,
-  allowedIPs: [.[]|select(.name=="wgAllowedIPs").value]
-  }]' \
-> "$runtime_dir/wgPeers.json"
+./generate-runtime.sh "$runtime_dir" || exit
 
 #ssh "$ssh_connection" <<EOF
 #[ -d /etc/nixos/runtime ] && sudo rm -rv /etc/nixos/runtime
