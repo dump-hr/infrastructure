@@ -1,7 +1,3 @@
-<%
-ssh_folderid="bde08d5b-bf83-423a-be45-2ffce13a1ec2"
-wg_folderid="0a784571-c93a-4c54-91d4-f84b6cff7760"
-%>
 { config, pkgs, ... }:
 let
   networkInterface = "enp0s20f0u1";
@@ -35,14 +31,10 @@ in {
     xkbVariant = "";
   };
 
-  users.users.root.openssh.authorizedKeys.keys = [
-<%
-bw list items --folderid $ssh_folderid |
-jq -r '.[] |
-  "\"" + (.fields[]|select(.name=="publicKey").value) +
-  "\" # " + .name'
-%>
-  ];
+  users.users.root = {
+    openssh.authorizedKeys.keys =
+      builtins.fromJSON(builtins.readFile ./runtime/sshAuthorizedKeys.json);
+  };
 
   nixpkgs.config.allowUnfree = true;
 
@@ -71,16 +63,7 @@ jq -r '.[] |
     '';
 
     privateKey = "<% echo -n hi %>";
-
-    peers = [
-<%
-bw list items --folderid $wg_folderid |
-jq -r '.[] |
-  "{ publicKey = \"" + (.fields[]|select(.name=="publicKey").value) +
-  "\"; allowedIPs = [ \"" + (.fields[]|select(.name=="allowedIPs").value) +
-  "\" ]; } # " + .name'
-%>
-    ];
+    peers = builtins.fromJSON(builtins.readFile ./runtime/wgPeers.json);
   };
 
 
