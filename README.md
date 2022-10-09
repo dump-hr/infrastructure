@@ -20,7 +20,7 @@
 
 ## Terraform
 
-- [Get Started - Azure](https://learn.hashicorp.com/collections/terraform/azure-get-started) `Blog post series` `43 minutes`
+- [Terraform Get Started - Azure](https://learn.hashicorp.com/collections/terraform/azure-get-started) `Blog post series` `43 minutes`
 - [Use Terraform to create a Linux VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-terraform) `Article` `6 minutes`
 - [Store Terraform state in Azure Storage](https://learn.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli) `Article` `4 minutes`
 - [A Comprehensive Guide to End-to-End-Declarative Deployment with Terraform and Nix](https://jonascarpay.com/posts/2022-09-19-declarative-deployment.html) `Article`
