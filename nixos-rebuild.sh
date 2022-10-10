@@ -1,41 +1,21 @@
 #!/bin/sh
 
-set -ex
+set -e
 
 ssh_connection="$1"
 configuration_file="$2"
-runtime_dir=./hosts/runtime
 
-################################################################################
-# generate and copy runtime data
+die() { echo "$0: $2" 1>&2; exit "$1"; }
 
-mkdir "$runtime_dir"
-trap "rm -r $runtime_dir" EXIT
+[ -n "$ssh_connection" ] || die 1 "ssh connection argument required"
+[ -n "$configuration_file" ] || die 1 "path to configuration.nix argument required"
 
-./generate-runtime.sh "$runtime_dir" || exit
+command -v bw  >/dev/null || die 2 "bitwarden cli required"
+command -v esh >/dev/null || die 2 "esh required"
 
-#ssh "$ssh_connection" <<EOF
-#[ -d /etc/nixos/runtime ] && sudo rm -rv /etc/nixos/runtime
-#sudo mkdir -v /etc/nixos/runtime
-#EOF
-#
-#grep -o "runtime/.*\.json" "$configuration_file" \
-#| sed "s#^runtime#$runtime_dir#" \
-#| xargs echo \
-#| xargs -I{} rsync {} "$ssh_connection:/etc/nixos/runtime/" --rsync-path="sudo rsync"
+bw unlock --check || die 3 "bitwarden vault is locked"
 
-ssh "$ssh_connection" "sudo rm -rf /etc/nixos/runtime"
+bw sync
 
-grep -o "runtime/.*\.json" "$configuration_file" \
-| sed "s#^runtime#$runtime_dir#" \
-| xargs echo \
-| xargs -I{} rsync {} "$ssh_connection:/etc/nixos/runtime/" \
-    --mkpath --rsync-path="sudo rsync"
-
-################################################################################
-# update configuration.nix
-
-rsync "$configuration_file" "$ssh_connection:/etc/nixos/configuration.nix" \
-  --rsync-path="sudo rsync"
-
+esh "$configuration_file" | ssh "$ssh_connection" "sudo cat > /etc/nixos/configuration.nix"
 ssh -t "$ssh_connection" "sudo nixos-rebuild switch"

@@ -32,8 +32,10 @@ in {
   };
 
   users.users.root = {
-    openssh.authorizedKeys.keys =
-      builtins.fromJSON(builtins.readFile ./runtime/sshAuthorizedKeys.json);
+    openssh.authorizedKeys.keys = builtins.fromJSON ''<%
+      bw list items --collectionid 927a8631-da7c-4197-a0ff-8b8bf19c967c \
+      | jq '[.[].fields[]|select(.name=="sshPublicKey").value]'
+    %>'';
   };
 
   nixpkgs.config.allowUnfree = true;
@@ -62,8 +64,17 @@ in {
       ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -o ${networkInterface} -j MASQUERADE
     '';
 
-    privateKey = builtins.fromJSON(builtins.readFile ./runtime/wgPrivateKey.json).key;
-    peers = builtins.fromJSON(builtins.readFile ./runtime/wgPeers.json);
+    privateKey = ''<%
+      bw get item e2985bbb-0d6b-4606-8374-a2546436ea27 \
+      | jq -j '.fields[]|select(.name=="wgPrivateKey").value'
+    %>'';
+    peers = builtins.fromJSON ''<%
+      bw list items --collectionid 45237f3d-7c00-4a12-893e-5c399432f461 \
+      | jq '[.[].fields | {
+        publicKey: .[]|select(.name=="wgPublicKey").value,
+        allowedIPs: [.[]|select(.name=="wgAllowedIPs").value]
+        }]'
+    %>'';
   };
 
 

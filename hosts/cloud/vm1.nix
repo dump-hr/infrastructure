@@ -14,8 +14,10 @@
     ];
   };
   users.users.root = {
-    openssh.authorizedKeys.keys =
-      builtins.fromJSON(builtins.readFile "./runtime/sshAuthorizedKeys.json");
+    openssh.authorizedKeys.keys = builtins.fromJSON ''<%
+      bw list items --collectionid 927a8631-da7c-4197-a0ff-8b8bf19c967c \
+      | jq '[.[].fields[]|select(.name=="sshPublicKey").value]'
+    %>'';
   };
   services.openssh.passwordAuthentication = false;
   security.sudo.wheelNeedsPassword = false;
