@@ -64,12 +64,15 @@
           DOMAIN = "https://bitwarden.dump.hr";
           DATABASE_URL = "postgres://vaultwarden:vaultwarden@vaultwarden-db:5432/vaultwarden";
           SIGNUPS_ALLOWED = "false";
-          #SMTP_FROM = "bitwarden@dump.hr";
-          #SMTP_HOST = "smtp.office365.com";
-          #SMTP_PORT = 587;
-          #SMTP_SECURITY = "starttls";
-          #SMTP_USERNAME = "bitwarden@dump.hr";
-          #SMTP_PASSWORD = "";
+          SMTP_FROM = "bitwarden@dump.hr";
+          SMTP_HOST = "smtp.office365.com";
+          SMTP_PORT = "587";
+          SMTP_SECURITY = "starttls";
+          SMTP_USERNAME = "bitwarden@dump.hr";
+          SMTP_PASSWORD = ''<%
+            bw get item 3ce68dc6-de4a-407e-949f-41220c3aa242 \
+            | jq -j '.login.password'
+          %>'';
         };
         volumes = [
           "/home/dumpovac/vaultwarden-appdata:/data"

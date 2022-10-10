@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -ex
 
 ssh_connection="$1"
 configuration_file="$2"
@@ -17,5 +17,5 @@ bw unlock --check || die 3 "bitwarden vault is locked"
 
 bw sync
 
-esh "$configuration_file" | ssh "$ssh_connection" "sudo cat > /etc/nixos/configuration.nix"
+esh "$configuration_file" | ssh "$ssh_connection" "sudo tee /etc/nixos/configuration.nix"
 ssh -t "$ssh_connection" "sudo nixos-rebuild switch"
