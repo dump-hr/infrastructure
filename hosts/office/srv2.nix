@@ -1,7 +1,3 @@
-<%
-ssh_folderid="bde08d5b-bf83-423a-be45-2ffce13a1ec2"
-wg_folderid="0a784571-c93a-4c54-91d4-f84b6cff7760"
-%>
 { config, pkgs, ... }:
 let
   networkInterface = "enp0s20f0u1";
@@ -35,14 +31,12 @@ in {
     xkbVariant = "";
   };
 
-  users.users.root.openssh.authorizedKeys.keys = [
-<%
-bw list items --folderid $ssh_folderid |
-jq -r '.[] |
-  "\"" + (.fields[]|select(.name=="publicKey").value) +
-  "\" # " + .name'
-%>
-  ];
+  users.users.root = {
+    openssh.authorizedKeys.keys = builtins.fromJSON ''<%
+      bw list items --collectionid 927a8631-da7c-4197-a0ff-8b8bf19c967c \
+      | jq '[.[].fields[]|select(.name=="sshPublicKey").value]'
+    %>'';
+  };
 
   nixpkgs.config.allowUnfree = true;
 
@@ -70,17 +64,17 @@ jq -r '.[] |
       ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -o ${networkInterface} -j MASQUERADE
     '';
 
-    privateKey = "<% echo -n hi %>";
-
-    peers = [
-<%
-bw list items --folderid $wg_folderid |
-jq -r '.[] |
-  "{ publicKey = \"" + (.fields[]|select(.name=="publicKey").value) +
-  "\"; allowedIPs = [ \"" + (.fields[]|select(.name=="allowedIPs").value) +
-  "\" ]; } # " + .name'
-%>
-    ];
+    privateKey = ''<%
+      bw get item e2985bbb-0d6b-4606-8374-a2546436ea27 \
+      | jq -j '.fields[]|select(.name=="wgPrivateKey").value'
+    %>'';
+    peers = builtins.fromJSON ''<%
+      bw list items --collectionid 45237f3d-7c00-4a12-893e-5c399432f461 \
+      | jq '[.[].fields | {
+        publicKey: .[]|select(.name=="wgPublicKey").value,
+        allowedIPs: [.[]|select(.name=="wgAllowedIPs").value]
+        }]'
+    %>'';
   };
 
 
