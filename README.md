@@ -20,11 +20,14 @@
 
 ## Terraform
 
+- [Terraform Tutorial – Getting Started With Terraform on AWS](https://spacelift.io/blog/terraform-tutorial) `Article` `31 minutes`
 - [Terraform Get Started - Azure](https://learn.hashicorp.com/collections/terraform/azure-get-started) `Blog post series` `43 minutes`
 - [Use Terraform to create a Linux VM](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-terraform) `Article` `6 minutes`
 - [Store Terraform state in Azure Storage](https://learn.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli) `Article` `4 minutes`
 - [A Comprehensive Guide to End-to-End-Declarative Deployment with Terraform and Nix](https://jonascarpay.com/posts/2022-09-19-declarative-deployment.html) `Article`
 - [Azure Terraform Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) `Docs`
+- [How to manage multiple environments with Terraform using workspaces](https://blog.gruntwork.io/how-to-manage-multiple-environments-with-terraform-using-workspaces-98680d89a03e) `Article` `10 minutes`
+- [How to Build AWS VPC using Terraform](https://spacelift.io/blog/terraform-aws-vpc) `Article` `10 minutes`
 
 ## vim
 
