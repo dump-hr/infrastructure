@@ -26,8 +26,18 @@
 - [Store Terraform state in Azure Storage](https://learn.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli) `Article` `4 minutes`
 - [A Comprehensive Guide to End-to-End-Declarative Deployment with Terraform and Nix](https://jonascarpay.com/posts/2022-09-19-declarative-deployment.html) `Article`
 - [Azure Terraform Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs) `Docs`
+- [AWS Terraform Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs) `Docs`
 - [How to manage multiple environments with Terraform using workspaces](https://blog.gruntwork.io/how-to-manage-multiple-environments-with-terraform-using-workspaces-98680d89a03e) `Article` `10 minutes`
 - [How to Build AWS VPC using Terraform](https://spacelift.io/blog/terraform-aws-vpc) `Article` `10 minutes`
+
+## AWS
+
+- [Top 50+ AWS Services Explained in 10 Minutes](https://www.youtube.com/watch?v=JIbIYCM48to) `YT video` `12 minutes`
+- [AWS Pricing Calculator](https://calculator.aws/#/) `Web tool`
+- [Scaling containers on AWS in 2022](https://www.vladionescu.me/posts/scaling-containers-on-aws-in-2022/) `Article` `45 minutes`
+- [Authenticating to AWS the right way for (almost) every use-case](https://leebriggs.co.uk/blog/2022/09/05/authenticating-to-aws-the-right-way) `Article` `11 minutes`
+- [Create Dynamic Contact Forms for S3 Static Websites Using AWS Lambda](https://aws.amazon.com/blogs/architecture/create-dynamic-contact-forms-for-s3-static-websites-using-aws-lambda-amazon-api-gateway-and-amazon-ses/) `Article`
+- [Deploying NixOS to Amazon EC2](https://typeclasses.com/nixos-on-aws) `Article` `15 minutes`
 
 ## vim
 
