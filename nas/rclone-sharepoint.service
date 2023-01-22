@@ -1,0 +1,8 @@
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=/usr/bin/rclone serve restic -v sharepoint-backup:nas
+
+[Install]
+WantedBy=multi-user.target
