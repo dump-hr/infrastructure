@@ -1,6 +1,7 @@
 # nas
 
-NAS is used as central place to store footage archive of all DUMP events.
+NAS is workstation with bunch of hard drives used as central place to store
+footage archive of all DUMP events and videos. Current capacity is 28TB.
 
 ## Update configuration
 
