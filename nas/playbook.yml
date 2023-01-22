@@ -1,0 +1,106 @@
+---
+- name: Set timezone
+  hosts: nas
+  become: true
+
+  tasks:
+    - name: Set timezone to Europe/Vienna
+      community.general.timezone:
+        name: Europe/Vienna
+
+- name: Upgrade system
+  hosts: nas
+  become: true
+
+  tasks:
+    - name: Upgrade apt packages
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: true
+
+    - name: Check if a reboot is needed
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+        get_md5: false
+      register: reboot_required_file
+
+    - name: Reboot server
+      ansible.builtin.reboot:
+        msg: "Reboot initiated by Ansible due to kernel updates"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+      when: reboot_required_file.stat.exists
+
+- name: Setup rootless systemd services
+  hosts: nas
+
+  tasks:
+    - name: Check if user is lingering
+      ansible.builtin.stat:
+        path: /var/lib/systemd/linger/{{ ansible_user }}
+      register: user_lingering
+
+    - name: Enable lingering is needed
+      ansible.builtin.command: |
+        loginctl enable-linger {{ ansible_user }}
+      when: not user_lingering.stat.exists
+
+- name: Setup backups
+  hosts: nas
+
+  tasks:
+    - name: Install rclone and restic
+      become: true
+      ansible.builtin.apt:
+        name:
+          - rclone
+          - restic
+        state: present
+
+    - name: Copy rclone config
+      ansible.builtin.copy:
+        src: rclone.conf
+        dest: .config/rclone/rclone.conf
+        mode: "0600"
+
+    - name: Copy rclone sharepoint serve service
+      ansible.builtin.copy:
+        src: rclone-sharepoint.service
+        dest: .config/systemd/user/rclone-sharepoint.service
+        mode: "0644"
+
+    - name: Run rclone sharepoint serve service
+      ansible.builtin.systemd:
+        name: rclone-sharepoint
+        state: started
+        enabled: true
+        scope: user
+
+    - name: Set restic repository in cron env
+      ansible.builtin.cron:
+        name: RESTIC_REPOSITORY
+        job: rest:http://localhost:8080/
+        env: true
+
+    - name: Set restic password in cron env
+      ansible.builtin.cron:
+        name: RESTIC_PASSWORD
+        job: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          30656132303736613336643234353836623365626231383634653335653537633831376439333636
+          6636333031383462303538656463363330343338366336300a636535366633363165313836643738
+          65313233303932656234393638633564363435386639343866383363633236636134343566353531
+          3165393963643738650a326465626163623130623636646537613339366532393062653031653164
+          3564
+        env: true
+
+    - name: Run restic backup cron job
+      ansible.builtin.cron:
+        name: restic-backup
+        job: /usr/bin/restic backup /nas
+        minute: "0"
+        hour: "23"
+        weekday: "3,6"
